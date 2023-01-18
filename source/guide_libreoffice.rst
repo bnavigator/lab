@@ -244,7 +244,6 @@ Open the file and insert the following content:
 .. note::
 
   * You can configure the service via the ``environment`` variables (highlighted!).
-  * Multiple file server domains can be separated by ``|``.
   * By default, LibreOffice assumes the file server to be a WOPI host.
   * If you setup the web backend to a subpath of the document root, you must also
     set ``--o:net.service_root=<subpath>`` in ``extra_params``.
@@ -254,6 +253,18 @@ Open the file and insert the following content:
     The set of options given in the example startup script is the minimal
     required one for the service to run without root capabilities and to let
     web backends handle TLS.
+  * Multiple domains for the same WOPI host or multiple WOPI hosts must be
+    configured through groups and alias names in the ``extra_params``, e.g
+    by having ``$fileserver1``, ``$fileserver2 `` and ``$alias2`` instead
+    of the singe ``$fileserver`` environemt variable:
+    
+    ::
+    
+            --o:storage.wopi.alias_groups.mode=groups
+            --o:storage.wopi.group[0].host[0]=$(echo "$fileserver1" | sed "s/\./\\\\\\./g")
+            --o:storage.wopi.group[1].host[0]=$(echo "$fileserver2" | sed "s/\./\\\\\\./g")
+            --o:storage.wopi.group[1].alias[0]=$(echo "$alias2" | sed "s/\./\\\\\\./g")
+     
 
 .. include:: includes/supervisord.rst
 
